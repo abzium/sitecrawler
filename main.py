@@ -31,30 +31,31 @@ def get_links_from_url(url_to_search, base_url) -> 'list':
 
 base_url = "https://www.sineris.com"
 
-visited = deque()
+visited = {}
 queue = deque()
 
-visited.append(base_url)
+# visited.append(base_url)
+visited[base_url] = []
 url_list = get_links_from_url(base_url, base_url)
 
 for item in url_list:
-    queue.append(item)
-
+    queue.append((item, base_url))
 
 while queue:
     url = queue.pop()
-    if url in visited:
-        # print(f"{url} was already visited!")
+    if url[0] in visited.keys():
+        print(f"{url[0]} was already visited!")
         continue
     else:
-        # print(f"{url} is now being visited...")
-        visited.append(url)
-        url_list = get_links_from_url(url, base_url)
+        print(f"{url[0]} is now being visited...")
+        # visited.append(url)
+        visited[url[0]] = []
+        url_list = get_links_from_url(url[0], base_url)
         for item in url_list:
-            queue.append(item)
+            queue.append((item, url[0]))
 
 print("============ RESULTS ============")
-for i in visited:
+for i in visited.keys():
     print(i)
 
 # href="/Internet/"
