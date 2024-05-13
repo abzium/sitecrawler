@@ -44,12 +44,14 @@ for item in url_list:
 while queue:
     url = queue.pop()
     if url[0] in visited.keys():
-        print(f"{url[0]} was already visited!")
-        continue
+        # Update the information on the visited dict
+        visited[url[0]].append(url[1])
+        # print(f"{url[0]} was already visited!")
+        # continue
     else:
         print(f"{url[0]} is now being visited...")
         # visited.append(url)
-        visited[url[0]] = []
+        visited[url[0]] = [url[1]]
         url_list = get_links_from_url(url[0], base_url)
         for item in url_list:
             queue.append((item, url[0]))
@@ -57,6 +59,4 @@ while queue:
 print("============ RESULTS ============")
 for i in visited.keys():
     print(i)
-
-# href="/Internet/"
-# <a class="btn-style-two theme-btn btn-item" href="/Internet/">
+    print(visited[i])
