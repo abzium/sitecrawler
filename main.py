@@ -5,33 +5,57 @@
 
 import requests
 import re
+from collections import deque
 
-url_to_search = "http://cflit3.vmx.link"
-# remove the slash for formatting further links
-if url_to_search.endswith('/'):
-    url_to_search = url_to_search[:-1]
+def get_links_from_url(url_to_search, base_url) -> 'list':
+    # visits a link and returns a list of all discovered links
+    if url_to_search.endswith('/'):
+        url_to_search = url_to_search[:-1]
 
-html_pattern = re.compile(r'href="/[\S]*html"')
-slash_pattern = re.compile(r'href="/[\S]*/"')
+    r = requests.get(url_to_search)
 
-r = requests.get(url_to_search)
+    html_pattern = re.compile(r'href="/[\S]*html"')
+    slash_pattern = re.compile(r'href="/[\S]*/"')
 
-# print(r.text)
-htmls = html_pattern.findall(r.text)
-slashes = slash_pattern.findall(r.text)
+    htmls = html_pattern.findall(r.text)
+    slashes = slash_pattern.findall(r.text)
 
-urls = list(set(htmls + slashes))
-urls.sort()
+    urls = list(set(htmls + slashes))
 
-# make each url into a proper link
-for i in range(len(urls)):
-    urls[i] = urls[i].replace('href="', url_to_search)
-    urls[i] = urls[i].replace('"', '')
+    for i in range(len(urls)):
+        urls[i] = urls[i].replace('href="', base_url)
+        urls[i] = urls[i].replace('"', '')
 
-for i in urls:
+    return urls
+    
+
+base_url = "https://www.sineris.com"
+
+visited = deque()
+queue = deque()
+
+visited.append(base_url)
+url_list = get_links_from_url(base_url, base_url)
+
+for item in url_list:
+    queue.append(item)
+
+
+while queue:
+    url = queue.pop()
+    if url in visited:
+        # print(f"{url} was already visited!")
+        continue
+    else:
+        # print(f"{url} is now being visited...")
+        visited.append(url)
+        url_list = get_links_from_url(url, base_url)
+        for item in url_list:
+            queue.append(item)
+
+print("============ RESULTS ============")
+for i in visited:
     print(i)
-
-print("All done!")
 
 # href="/Internet/"
 # <a class="btn-style-two theme-btn btn-item" href="/Internet/">
