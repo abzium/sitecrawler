@@ -29,12 +29,11 @@ def get_links_from_url(url_to_search, base_url) -> 'list':
     return urls
     
 
-base_url = "https://www.sineris.com"
+base_url = input("Enter base url (ex. https://www.example.com): ")
 
 visited = {}
 queue = deque()
 
-# visited.append(base_url)
 visited[base_url] = []
 url_list = get_links_from_url(base_url, base_url)
 
@@ -46,8 +45,6 @@ while queue:
     if url[0] in visited.keys():
         # Update the information on the visited dict
         visited[url[0]].append(url[1])
-        # print(f"{url[0]} was already visited!")
-        # continue
     else:
         print(f"{url[0]} is now being visited...")
         # visited.append(url)
